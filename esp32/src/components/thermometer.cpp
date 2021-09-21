@@ -11,12 +11,9 @@
 
 int scanTime = 5; //In seconds
 
-class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
-{
-    void onResult(BLEAdvertisedDevice advertisedDevice)
-    {
-        if (advertisedDevice.haveName())
-        {
+class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
+    void onResult(BLEAdvertisedDevice advertisedDevice) override {
+        if (advertisedDevice.haveName()) {
             boolean done = false;
 
             auto payload = advertisedDevice.getPayload();
@@ -25,37 +22,33 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 
             float temp, humidity;
 
-            if (id == 0x0d)
-            {
-                temp = (((int)payload[22]) * 16 * 16 + ((int)payload[21])) / 10.0f;
-                humidity = (((int)payload[24]) * 16 * 16 + ((int)payload[23])) / 10.0f;
+            if (id == 0x0d) {
+                temp = (((int) payload[22]) * 16 * 16 + ((int) payload[21])) / 10.0f;
+                humidity = (((int) payload[24]) * 16 * 16 + ((int) payload[23])) / 10.0f;
                 done = true;
-
-                if (done)
-                {
-                    Thermometer obj = *Thermometer::get();
-                    obj.getOnChange()(obj, temp, humidity);
-                }
             }
+
+            if (done) {
+                Thermometer obj = *Thermometer::get();
+                obj.getOnChange()(obj, temp, humidity);
+            }
+
         }
     }
 };
 
 
-Thermometer* Thermometer::instance = nullptr;
+Thermometer *Thermometer::instance = nullptr;
 
 
-Thermometer *Thermometer::get()
-{
-    if (Thermometer::instance == nullptr)
-    {
+Thermometer *Thermometer::get() {
+    if (Thermometer::instance == nullptr) {
         Thermometer::instance = new Thermometer();
     }
     return Thermometer::instance;
 }
 
-Thermometer::Thermometer()
-{
+Thermometer::Thermometer() {
     BLEDevice::init("");
     ble = BLEDevice::getScan(); //create new scan
     ble->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
@@ -64,18 +57,15 @@ Thermometer::Thermometer()
     ble->setWindow(99); // less or equal setInterval value
 }
 
-void Thermometer::loop()
-{
+void Thermometer::loop() {
     ble->start(scanTime, false);
     ble->clearResults();
 }
 
-Thermometer::CallbackFunction Thermometer::getOnChange()
-{
+Thermometer::CallbackFunction Thermometer::getOnChange() {
     return this->m_on_change;
 }
 
-void Thermometer::setOnChange(CallbackFunction callback)
-{
+void Thermometer::setOnChange(CallbackFunction callback) {
     m_on_change = callback;
 }

@@ -8,8 +8,7 @@
 #include "Arduino.h"
 #include "BLEScan.h"
 
-class Thermometer
-{
+class Thermometer {
 
 private:
     typedef void (*CallbackFunction)(Thermometer &, float, float);
@@ -18,13 +17,16 @@ private:
 
     BLEScan *ble = nullptr;
     CallbackFunction m_on_change = nullptr;
+
     Thermometer();
 
 public:
     static Thermometer *get();
 
     void setOnChange(CallbackFunction method);
+
     CallbackFunction getOnChange();
+
     void loop();
 };
 
