@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>LwIP_HTTP_Server_Netconn_RTOS</name>
+	<comment></comment>
+	<projects>
+		<project>ethernet</project>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+</projectDescription>

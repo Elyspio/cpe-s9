@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+    mqtt:
+        container_name: mqtt
+        ports:
+            - '80:80'
+            - '1883:1883'
+            - '9001:9001'
+        volumes:
+            - './mosquitto.conf:/mqtt/config/mosquitto.conf'
+            - './data/data:/mqtt/data'
+            - './data/log:/mqtt/log'
+        restart: always
+        image: toke/mosquitto
+
+    
