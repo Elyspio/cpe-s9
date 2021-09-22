@@ -11,7 +11,7 @@
 class Thermometer {
 
 private:
-    typedef void (*CallbackFunction)(Thermometer &, float, float);
+    typedef void (*CallbackFunction)(float, float);
 
     static Thermometer *instance;
 

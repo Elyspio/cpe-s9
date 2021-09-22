@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////
 /*
-  Button2.cpp - Arduino Library to simplify working with buttons.
+  Btn.cpp - Arduino Library to simplify working with buttons.
   Created by Lennart Hennigs, October 28, 2017.
 */
 /////////////////////////////////////////////////////////////////
@@ -10,7 +10,7 @@
 
 /////////////////////////////////////////////////////////////////
 
-Button2::Button2(byte attachTo, byte buttonMode /*= INPUT_PULLUP*/, unsigned int debounceTimeout /*= DEBOUNCE_MS*/) {
+Btn::Btn(byte attachTo, byte buttonMode /*= INPUT_PULLUP*/, unsigned int debounceTimeout /*= DEBOUNCE_MS*/) {
     pin = attachTo;
     setDebounceTime(debounceTimeout);
     pinMode(attachTo, buttonMode);
@@ -18,91 +18,91 @@ Button2::Button2(byte attachTo, byte buttonMode /*= INPUT_PULLUP*/, unsigned int
 
 /////////////////////////////////////////////////////////////////
 
-bool Button2::operator==(Button2 &rhs) {
+bool Btn::operator==(Btn &rhs) {
     return (this == &rhs);
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setDebounceTime(unsigned int ms) {
+void Btn::setDebounceTime(unsigned int ms) {
     debounce_time_ms = ms;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setChangedHandler(CallbackFunction f) {
+void Btn::setChangedHandler(CallbackFunction f) {
     change_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setPressedHandler(CallbackFunction f) {
+void Btn::setPressedHandler(CallbackFunction f) {
     pressed_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setReleasedHandler(CallbackFunction f) {
+void Btn::setReleasedHandler(CallbackFunction f) {
     released_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setClickHandler(CallbackFunction f) {
+void Btn::setClickHandler(CallbackFunction f) {
     click_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setTapHandler(CallbackFunction f) {
+void Btn::setTapHandler(CallbackFunction f) {
     tap_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setLongClickHandler(CallbackFunction f) {
+void Btn::setLongClickHandler(CallbackFunction f) {
     long_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setDoubleClickHandler(CallbackFunction f) {
+void Btn::setDoubleClickHandler(CallbackFunction f) {
     double_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::setTripleClickHandler(CallbackFunction f) {
+void Btn::setTripleClickHandler(CallbackFunction f) {
     triple_cb = f;
 }
 
 /////////////////////////////////////////////////////////////////
 
-unsigned int Button2::wasPressedFor() {
+unsigned int Btn::wasPressedFor() {
     return down_time_ms;
 }
 
 /////////////////////////////////////////////////////////////////
 
-boolean Button2::isPressed() {
+boolean Btn::isPressed() {
     return (state == LOW);
 }
 
 /////////////////////////////////////////////////////////////////
 
-unsigned int Button2::getNumberOfClicks() {
+unsigned int Btn::getNumberOfClicks() {
     return click_count;
 }
 
 /////////////////////////////////////////////////////////////////
 
-unsigned int Button2::getClickType() {
+unsigned int Btn::getClickType() {
     return last_click_type;
 }
 
 /////////////////////////////////////////////////////////////////
 
-void Button2::loop() {
+void Btn::loop() {
     if (pin < 0)return;
 
     prev_state = state;

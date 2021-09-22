@@ -26,7 +26,7 @@
 
 /////////////////////////////////////////////////////////////////
 
-class Button {
+class Btn {
 private:
     byte pin;
     int prev_state;
@@ -40,7 +40,7 @@ private:
     bool pressed_triggered = false;
     bool longclick_detected = false;
 
-    typedef void (*CallbackFunction)(Button &);
+    typedef void (*CallbackFunction)(Btn &);
 
     CallbackFunction pressed_cb = NULL;
     CallbackFunction released_cb = NULL;
@@ -52,9 +52,9 @@ private:
     CallbackFunction triple_cb = NULL;
 
 public:
-    Button() { pin = -1; }
+    Btn() { pin = -1; }
 
-    Button(byte attachTo, byte buttonMode = INPUT_PULLUP, unsigned int debounceTimeout = DEBOUNCE_MS);
+    Btn(byte attachTo, byte buttonMode = INPUT_PULLUP, unsigned int debounceTimeout = DEBOUNCE_MS);
 
     void setDebounceTime(unsigned int ms);
 
@@ -84,7 +84,7 @@ public:
 
     uint8_t getAttachPin() { return pin; }
 
-    bool operator==(Button &rhs);
+    bool operator==(Btn &rhs);
 
     void loop();
 };

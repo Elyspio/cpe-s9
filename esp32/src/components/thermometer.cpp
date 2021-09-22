@@ -30,7 +30,10 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
 
             if (done) {
                 Thermometer obj = *Thermometer::get();
-                obj.getOnChange()(obj, temp, humidity);
+                auto callback = obj.getOnChange();
+                if(callback != nullptr) {
+                    callback(temp, humidity);
+                }
             }
 
         }

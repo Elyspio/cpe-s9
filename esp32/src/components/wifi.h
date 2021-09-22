@@ -5,19 +5,23 @@
 #ifndef T_DISPLAY_FACTORY_TEST_MAIN_WIFI_H
 #define T_DISPLAY_FACTORY_TEST_MAIN_WIFI_H
 
-#include <cstring>
-#include <WString.h>
+#include <string>
+#include <map>
 
-class Wifi {
+class Wifi
+{
 private:
-    String m_ssid;
-    String m_password;
+    std::string m_ssid;
+    std::string m_password;
+    Wifi(const std::string &ssid, const std::string &password);
+    Wifi();
+    static std::map<std::string, Wifi> *instances;
 
 public:
-    Wifi(const String &ssid, const String &password);
+    Wifi static *get(const std::string &ssid, const std::string &password);
 
     bool connect(int timeout);
-
+    bool isConnected();
     void disconnect();
 };
 

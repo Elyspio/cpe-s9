@@ -8,6 +8,14 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(src)
 
 add_executable(t_display_factory_test_main
-        src/Button2.cpp
-        src/Button2.h
-        src/main.cpp src/wifi.cpp src/wifi.h src/thermometer.cpp src/thermometer.h)
+        src/components/btn.cpp
+        src/components/thermometer.cpp
+        src/components/util.cpp
+        src/components/wifi.cpp
+        src/components/btn.h
+        src/components/thermometer.h
+        src/components/util.h
+        src/components/wifi.h
+        src/main.cpp 
+)
+ 

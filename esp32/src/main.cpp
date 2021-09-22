@@ -1,4 +1,5 @@
 #include <TFT_eSPI.h>
+#include <thread>         // std::thread
 
 #include "components/btn.h"
 #include "components/thermometer.h"
@@ -8,19 +9,20 @@
 #define BUTTON_2 0
 
 TFT_eSPI screen = TFT_eSPI(135, 240);
+Btn btnR(BUTTON_1);
+Btn btnL(BUTTON_2);
+Wifi *wifi;
+std::thread* bluetoothThread;
+Thermometer *thermometer;
 
-Button btn1(BUTTON_1);
-Button btn2(BUTTON_2);
-
-Wifi wifi = Wifi("Jonathan's Galaxy A50", "Azeqsdwxc123");
-
-Thermometer *thermometer = Thermometer::get();
-
-
-void setup() {
+void setup()
+{
     Serial.begin(115200);
     Serial.println("Start");
 
+    thermometer = Thermometer::get();
+
+    wifi = Wifi::get("esp-4", "Azeqsdwxc123");
     screen.init();
     screen.setRotation(1);
     screen.setTextSize(2);
@@ -30,7 +32,6 @@ void setup() {
     screen.setTextDatum(MC_DATUM);
 
     screen.setRotation(0);
-
 
     screen.fillScreen(TFT_BLACK);
     screen.setTextDatum(MC_DATUM);
@@ -43,24 +44,25 @@ void setup() {
 
     // BLE
 
-    thermometer->setOnChange([](Thermometer &thermometer, float temperature, float humidity) {
-        Serial.printf("T=%f H=%f", temperature, humidity);
+    thermometer->setOnChange([](float temperature, float humidity)
+                             { Serial.printf("Sensor update: T=%f H=%f\n", temperature, humidity); });
+
+    btnL.setClickHandler([](Btn &_)
+                         { wifi->connect(10); });
+
+    btnR.setClickHandler([](Btn &_)
+                         { wifi->disconnect(); });
+
+
+    bluetoothThread = new std::thread([]{
+        while(true) {
+            thermometer->loop();
+        }
     });
-
-
-    btn1.setClickHandler([](Button &_) {
-        wifi.connect(10);
-    });
-
-
-    btn2.setClickHandler([](Button &_) {
-        wifi.disconnect();
-    });
-
 }
 
-void loop() {
-    thermometer->loop();
-    btn1.loop();
-    btn2.loop();
+void loop()
+{
+    btnR.loop();
+    btnL.loop();
 }
