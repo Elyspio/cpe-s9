@@ -1,0 +1,4 @@
+main.c:192:13:Display_DemoDescription	72	static
+main.c:72:5:main	96	static,ignoring_inline_asm
+main.c:233:9:CheckForUserInput	8	static
+main.c:249:6:HAL_GPIO_EXTI_Callback	8	static
