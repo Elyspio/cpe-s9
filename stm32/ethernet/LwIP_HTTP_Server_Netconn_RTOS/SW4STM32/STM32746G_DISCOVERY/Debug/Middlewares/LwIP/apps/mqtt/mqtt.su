@@ -23,5 +23,5 @@ mqtt.c:1238:1:mqtt_set_inpub_callback	24	static
 mqtt.c:1254:1:mqtt_client_new	0	static
 mqtt.c:1266:1:mqtt_client_free	0	static
 mqtt.c:1283:1:mqtt_client_connect	72	static
-mqtt.c:1444:1:mqtt_disconnect	8	static
-mqtt.c:1463:1:mqtt_client_is_connected	8	static
+mqtt.c:1438:1:mqtt_disconnect	8	static
+mqtt.c:1457:1:mqtt_client_is_connected	8	static

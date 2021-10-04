@@ -66,13 +66,16 @@
 
 void example_do_connect(mqtt_client_t *client);
 static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status);
+static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len);
+static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags);
+
 
 static void mqtt_sub_request_cb(void *arg, err_t result)
 {
 	/* Just print the result code here for simplicity,
      normal behaviour would be to take some action if subscribe fails like
      notifying user, retry subscribe or disconnect from server */
-	LCD_UsrLog((char *)"  mqtt_sub_request_cb\n");
+	LCD_UsrLog((char *)"  mqtt_sub_request_cb %d\n", result);
 }
 
 void example_do_connect(mqtt_client_t *client)
@@ -88,10 +91,11 @@ void example_do_connect(mqtt_client_t *client)
 
 
 	ip_addr_t ip_addr;
-	ip_addr.addr = ((u32_t)0xC0A8017AUL);
+	IP4_ADDR(&ip_addr, 192,168,1,122);
 
 
 	err = mqtt_client_connect(client, &ip_addr, MQTT_PORT, mqtt_connection_cb, 0, &ci);
+	LCD_UsrLog((char *)"mqtt_client_connect err=%d\n", err);
 
 	for ( ;; ) {
 		osDelay(200);
@@ -100,18 +104,10 @@ void example_do_connect(mqtt_client_t *client)
 
 void mqtt(void const *argument)
 {
-	LCD_UsrLog((char *)"mqtt 2\n");
 	mqtt_client_t static_client;
-	LCD_UsrLog((char *)"mqtt 2\n");
-	memset(static_client, 0, sizeof(mqtt_client_t));
+	memset(&static_client, 0, sizeof(mqtt_client_t));
 
 	example_do_connect(&static_client);
-}
-
-/* For now just print the result code if something goes wrong
-  if(err != ERR_OK) {
-    printf("mqtt_connect return %d\n", err);
-  }
 }
 
 
@@ -124,8 +120,8 @@ void mqtt_client_init()
 {
 
 	/* Start DHCPClient */
-	LCD_UsrLog((char *)"Waiting 10s before start MQTT\n");
-	osDelay(10000);
+	LCD_UsrLog((char *)"Waiting 5s before start MQTT\n");
+	osDelay(5000);
 	LCD_UsrLog((char *)"Starting MQTT\n");
 
 	osThreadDef(MQTT, mqtt, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
@@ -135,14 +131,18 @@ void mqtt_client_init()
 static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status)
 {
 	err_t err;
-	LCD_UsrLog((char *)"mqtt_connection_cb: Successfully %d\n", status);
+	LCD_UsrLog((char *)"mqtt_connection_cb: %d\n", status);
 
 	if (status == MQTT_CONNECT_ACCEPTED)
 	{
 		LCD_UsrLog((char *)"mqtt_connection_cb: Successfully connected\n");
 
 		/* Subscribe to a topic named "subtopic" with QoS level 1, call mqtt_sub_request_cb with result */
-		err = mqtt_subscribe(client, "subtopic", 1, mqtt_sub_request_cb, arg);
+		err = mqtt_subscribe(client, "JGD-OPT_temperature", 0, mqtt_sub_request_cb, arg);
+		LCD_UsrLog((char *)"subscribe topic JGD-OPT_temperature: %d\n", err);
+		err = mqtt_subscribe(client, "JGD-OPT_humidity", 0, mqtt_sub_request_cb, arg);
+		LCD_UsrLog((char *)"subscribe topic JGD-OPT_humidity: %d\n", err);
+		mqtt_set_inpub_callback(client, mqtt_incoming_publish_cb, mqtt_incoming_data_cb, arg);
 
 		if (err != ERR_OK)
 		{
@@ -156,4 +156,60 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
 		/* Its more nice to be connected, so try to reconnect */
 		example_do_connect(client);
 	}
+}
+
+
+
+
+
+enum {
+	TOPIC_TEMPERATURE,
+	TOPIC_HUMIDITY
+};
+
+
+/* 
+-----------------------------------------------------------------
+3. Implementing callbacks for incoming publish and data
+The idea is to demultiplex topic and create some reference to be used in data callbacks
+Example here uses a global variable, better would be to use a member in arg
+If RAM and CPU budget allows it, the easiest implementation might be to just take a copy of
+the topic string and use it in mqtt_incoming_data_cb
+*/
+static int inpub_id;
+static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
+{
+
+  /* Decode topic string into a user defined reference */
+  if(strcmp(topic, "JGD-OPT_temperature") == 0) {
+    inpub_id = TOPIC_TEMPERATURE;
+  }
+    /* Decode topic string into a user defined reference */
+  if(strcmp(topic, "JGD-OPT_humidity") == 0) {
+    inpub_id = TOPIC_HUMIDITY;
+  }  
+}
+
+static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
+{
+
+  if(flags & MQTT_DATA_FLAG_LAST) {
+
+	  if(inpub_id == TOPIC_HUMIDITY) {
+		  char str[50];
+		  for(int i = 0; i < len; i++) {
+			  str[i] = (char) data[i];
+		  }
+		  LCD_UsrLog((char *)"Humidity %s\n", str);
+	  }
+
+	  if(inpub_id == TOPIC_TEMPERATURE) {
+		  char str[50];
+		  for(int i = 0; i < len; i++) {
+			  str[i] = (char) data[i];
+		  }
+		  LCD_UsrLog((char *)"Temperature %s\n", str);
+	  }
+
+  }
 }

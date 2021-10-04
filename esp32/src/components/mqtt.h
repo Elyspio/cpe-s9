@@ -7,8 +7,8 @@
 
 #include <string>
 
-const std::string wifi_ssid = "esp-4";
-const std::string wifi_passphrase = "Azeqsdwxc123";
+const std::string wifi_ssid = "ASUS";
+const std::string wifi_passphrase = "astro4student";
 
 class Mqtt {
 
