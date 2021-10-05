@@ -51,7 +51,7 @@
 #include "lwip/apps/fs.h"
 #include "string.h"
 #include <stdio.h>
-#include "httpserver-netconn.h"
+#include "mqtt.h"
 #include "cmsis_os.h"
 #include "lwip/apps/mqtt.h"
 #include "lwip/apps/mqtt_priv.h"
@@ -78,6 +78,16 @@ static void mqtt_sub_request_cb(void *arg, err_t result)
 	LCD_UsrLog((char *)"  mqtt_sub_request_cb %d\n", result);
 }
 
+
+void mqtt(void const *argument)
+{
+	mqtt_client_t static_client;
+	memset(&static_client, 0, sizeof(mqtt_client_t));
+
+	example_do_connect(&static_client);
+}
+
+
 void example_do_connect(mqtt_client_t *client)
 {
 	struct mqtt_connect_client_info_t ci;
@@ -100,14 +110,6 @@ void example_do_connect(mqtt_client_t *client)
 	for ( ;; ) {
 		osDelay(200);
 	}
-}
-
-void mqtt(void const *argument)
-{
-	mqtt_client_t static_client;
-	memset(&static_client, 0, sizeof(mqtt_client_t));
-
-	example_do_connect(&static_client);
 }
 
 
@@ -143,11 +145,6 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
 		err = mqtt_subscribe(client, "JGD-OPT_humidity", 0, mqtt_sub_request_cb, arg);
 		LCD_UsrLog((char *)"subscribe topic JGD-OPT_humidity: %d\n", err);
 		mqtt_set_inpub_callback(client, mqtt_incoming_publish_cb, mqtt_incoming_data_cb, arg);
-
-		if (err != ERR_OK)
-		{
-			LCD_UsrLog((char *)"mqtt_subscribe return: %d\n", err);
-		}
 	}
 	else
 	{

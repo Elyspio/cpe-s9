@@ -3,6 +3,7 @@
 	<name>LwIP_HTTP_Server_Netconn_RTOS</name>
 	<comment></comment>
 	<projects>
+		<project>ethernet</project>
 	</projects>
 	<buildSpec>
 	</buildSpec>

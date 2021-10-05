@@ -52,8 +52,9 @@
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
 #include "app_ethernet.h"
-#include "httpserver-netconn.h"
+#include "mqtt.h"
 #include "lcd_log.h"
+#include "servo.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -92,7 +93,9 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();  
-  
+  // init_servo();
+
+
   /* Configure the system clock to 200 MHz */
   SystemClock_Config(); 
   

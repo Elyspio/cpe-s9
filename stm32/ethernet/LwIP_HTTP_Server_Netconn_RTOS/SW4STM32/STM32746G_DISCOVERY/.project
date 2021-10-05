@@ -52,14 +52,14 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/ethernetif.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/httpserver-netconn.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/httpserver-netconn.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/mqtt.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/httpserver-netconn.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/stm32f7xx_hal_timebase_tim.c</name>

@@ -5,3 +5,6 @@ cmake-build-*
 build
 .metadata
 *.log
+stm32/ethernet/LwIP_HTTP_Server_Netconn_RTOS/SW4STM32/
+Debug
+mqtt/data/data/mosquitto.db

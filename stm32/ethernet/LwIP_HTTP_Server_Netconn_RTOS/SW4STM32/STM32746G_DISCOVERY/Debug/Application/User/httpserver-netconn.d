@@ -37,7 +37,7 @@ Application/User/httpserver-netconn.o: \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/fs.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/httpd_opts.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/prot/iana.h \
- ../../../Inc/httpserver-netconn.h \
+ ../../../Inc/mqtt.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/mqtt.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/mqtt_opts.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/mqtt_priv.h \
@@ -174,7 +174,7 @@ Application/User/httpserver-netconn.o: \
 
 ../../../Middlewares/Third_Party/LwIP/src/include/lwip/prot/iana.h:
 
-../../../Inc/httpserver-netconn.h:
+../../../Inc/mqtt.h:
 
 ../../../Middlewares/Third_Party/LwIP/src/include/lwip/apps/mqtt.h:
 

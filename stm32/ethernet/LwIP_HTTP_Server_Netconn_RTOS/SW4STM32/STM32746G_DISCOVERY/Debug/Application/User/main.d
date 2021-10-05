@@ -84,10 +84,11 @@ Application/User/main.o: \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/timeouts.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/sys.h \
  ../../../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h \
- ../../../Inc/app_ethernet.h ../../../Inc/httpserver-netconn.h \
+ ../../../Inc/app_ethernet.h ../../../Inc/mqtt.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/api.h \
  ../../../Middlewares/Third_Party/LwIP/src/include/lwip/netbuf.h \
- ../../../Utilities/Log/lcd_log.h ../../../Inc/lcd_log_conf.h
+ ../../../Utilities/Log/lcd_log.h ../../../Inc/lcd_log_conf.h \
+ ../../../Inc/servo.h
 
 ../../../Inc/main.h:
 
@@ -259,7 +260,7 @@ Application/User/main.o: \
 
 ../../../Inc/app_ethernet.h:
 
-../../../Inc/httpserver-netconn.h:
+../../../Inc/mqtt.h:
 
 ../../../Middlewares/Third_Party/LwIP/src/include/lwip/api.h:
 
@@ -268,3 +269,5 @@ Application/User/main.o: \
 ../../../Utilities/Log/lcd_log.h:
 
 ../../../Inc/lcd_log_conf.h:
+
+../../../Inc/servo.h:
