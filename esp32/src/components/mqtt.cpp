@@ -17,7 +17,7 @@ const bool retain = true;
 EspMQTTClient mqtt(
         wifi_ssid.c_str(),
         wifi_passphrase.c_str(),
-        "192.168.1.122", // MQTT Broker server ip
+        "192.168.1.94", // MQTT Broker server ip
         "ESP-JGD-OPT",     // Client name that uniquely identify your device
         1883               // The MQTT port, default to 1883. this line can be omitted
 );

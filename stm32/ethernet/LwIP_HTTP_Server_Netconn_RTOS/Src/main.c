@@ -93,7 +93,6 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();  
-  // init_servo();
 
 
   /* Configure the system clock to 200 MHz */
@@ -108,6 +107,9 @@ int main(void)
   
   osThreadCreate (osThread(Start), NULL);
   
+  init_servo();
+
+
   /* Start scheduler */
   osKernelStart();
   
@@ -143,6 +145,8 @@ static void StartThread(void const * argument)
 
   	  /* Initialize webserver demo */
   mqtt_client_init();
+
+  init_servo();
 
   for( ;; )
   {

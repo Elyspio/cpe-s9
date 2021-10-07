@@ -83,16 +83,16 @@ For more details about this application, refer to UM1713 "STM32Cube interfacing 
 
 Connectivity, LwIP, Ethernet, HTTP Server, Netconn, TCP/IP, FreeRTOS, DHCP	
 
-@Note If the user code size exceeds the DTCM-RAM size or starts from internal cacheable memories (SRAM1 and SRAM2),that is shared between several processors,
-      then it is highly recommended to enable the CPU cache and maintain its coherence at application level.
-      The address and the size of cacheable buffers (shared between CPU and other masters)  must be properly updated to be aligned to cache line size (32 bytes).
+@Noteï¿½If the user code size exceeds the DTCM-RAM size or starts from internal cacheable memories (SRAM1 and SRAM2),that is shared between several processors,
+ ï¿½ï¿½ï¿½ï¿½ï¿½then it is highly recommended to enable the CPU cache and maintain its coherence at application level.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½The address and the size of cacheable buffers (shared between CPU and other masters)  must be properly updated to be aligned to cache line size (32 bytes).
 
 @Note It is recommended to enable the cache and maintain its coherence, but depending on the use case
-      It is also possible to configure the MPU as "Write through", to guarantee the write access coherence.
-      In that case, the MPU must be configured as Cacheable/Bufferable/Not Shareable.
-      Even though the user must manage the cache coherence for read accesses.
-      Please refer to the AN4838 “Managing memory protection unit (MPU) in STM32 MCUs”
-      Please refer to the AN4839 “Level 1 cache on STM32F7 Series”
+ï¿½ï¿½ï¿½ï¿½ï¿½ It is also possible to configure the MPU as "Write through", to guarantee the write access coherence.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½In that case, the MPU must be configured as Cacheable/Bufferable/Not Shareable.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Even though the user must manage the cache coherence for read accesses.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Please refer to the AN4838 ï¿½Managing memory protection unit (MPU) in STM32 MCUsï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Please refer to the AN4839 ï¿½Level 1 cache on STM32F7 Seriesï¿½
 
 @par Directory contents
 
@@ -104,13 +104,13 @@ Connectivity, LwIP, Ethernet, HTTP Server, Netconn, TCP/IP, FreeRTOS, DHCP
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/main.h                  Main program header file
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/lwipopts.h              LwIP stack configuration options
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/FreeRTOSConfig.h        FreeRTOS configuration options
-  - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/httpserver-netconn.h    header for httpserver-netconn.c
+  - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/mqtt.h    header for mqtt.c
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/app_ethernet.c          Ethernet specific module
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/stm32f7xx_it.c          STM32 interrupt handlers
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/main.c                  Main program
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/system_stm32f7xx.c      STM32F7xx system clock configuration file
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/ethernetif.c            Interfacing LwIP to ETH driver
-  - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/httpserver-netconn.c    httpserver netconn main thread
+  - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/mqtt.c    httpserver netconn main thread
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/fs.c                    file system functions
   - LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/fsdata_custom.c                ROM filesystem data (html pages)
   

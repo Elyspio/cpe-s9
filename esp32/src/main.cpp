@@ -44,13 +44,7 @@ void setup() {
     screen.fillScreen(TFT_BLACK);
     screen.setTextDatum(MC_DATUM);
 
-    screen.drawString("Left Button:", screen.width() / 2, screen.height() / 2 - 16);
-    screen.drawString("[Connect to Wifi]", screen.width() / 2, screen.height() / 2);
-    screen.drawString("Right Button:", screen.width() / 2, screen.height() / 2 + 16);
-    screen.drawString("[Disconnect from Wifi]", screen.width() / 2, screen.height() / 2 + 32);
     screen.setTextDatum(TL_DATUM);
-
-    // BLE
 
     thermometer->setOnChange([](float temperature, float humidity) {
         Serial.printf("Sensor update: T=%f H=%f\n", temperature, humidity);

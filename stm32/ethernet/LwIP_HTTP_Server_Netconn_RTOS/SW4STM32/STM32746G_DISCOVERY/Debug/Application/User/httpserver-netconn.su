@@ -1,7 +1,0 @@
-httpserver-netconn.c:73:13:mqtt_sub_request_cb	0	static
-httpserver-netconn.c:177:13:mqtt_incoming_publish_cb	8	static
-httpserver-netconn.c:190:13:mqtt_incoming_data_cb	72	static
-httpserver-netconn.c:91:6:example_do_connect	48	static
-httpserver-netconn.c:82:6:mqtt	504	static
-httpserver-netconn.c:133:13:mqtt_connection_cb	40	static
-httpserver-netconn.c:121:6:mqtt_client_init	40	static
