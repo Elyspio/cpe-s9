@@ -86,7 +86,7 @@ class AStar(AbstractShortPath):
             pub_marker.publish(marker_container)
             # marker_container = self._create_marker_container()
             # wait before next iteration
-            rospy.sleep(self.SLEEP_TIME_BEFORE_NEXT_ITERATION)
+            # rospy.sleep(self.SLEEP_TIME_BEFORE_NEXT_ITERATION)
         print(str(prev))
         return prev
 

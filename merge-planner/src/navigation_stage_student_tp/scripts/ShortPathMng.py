@@ -29,7 +29,7 @@ class ShortPathMng:
     RESOLUTION = 8
     shortPathAlgoMap = {'WAVEFRONT': WaveFront(), 'ASTAR': AStar(), 'DIJKSTRA': Dijsktra(),
                         'GREEDY_BEST_FIRST_SEARCH': GreedyBestFirstSearch()}
-    shortPathMethodeSelected = 'ASTAR'
+    shortPathMethodeSelected = 'WAVEFRONT'
     tflistener = ""
 
     MAX_VALUE = 1000000
@@ -124,7 +124,7 @@ class ShortPathMng:
         self.isMapComputed = True
 
         for shortPathMetodName in self.shortPathAlgoMap:
-            self.shortPathAlgoMap[shortPathMetodName].setMap(self.resizedMap, self.map_width, self.map_height)
+            self.shortPathAlgoMap[shortPathMetodName].setMap(self.resizedMap, self.map_width, self.map_height,self.resolution,self.RESOLUTION)
             self.shortPathAlgoMap[shortPathMetodName].RESOLUTION = self.RESOLUTION
 
     # **************************************************
@@ -153,7 +153,7 @@ class ShortPathMng:
                     cell_x = left_x + i
                     cell_y = left_y + j
                     if 0 <= cell_x < map_x_len and 0 <= cell_y < map_y_len:
-                        # print("cell ", cell_x, cell_y, " is becoming an obstacle", nb_size_to_add, i, j)
+                        print("cell ", cell_x, cell_y, " is becoming an obstacle", nb_size_to_add, i, j)
                         map[cell_x][cell_y] = self.MAP_OBSTACLE_VALUE
 
         return map
@@ -166,8 +166,8 @@ class ShortPathMng:
         marker_container.type = Marker.CUBE_LIST
         marker_container.points = []
         marker_container.colors = []
-        marker_container.header.frame_id = "map";
-        marker_container.ns = "wall";
+        marker_container.header.frame_id = "map"
+        marker_container.ns = "wall"
         marker_container.scale.x = (0.5 / float(10)) * resolution;
         marker_container.scale.y = (0.5 / float(10)) * resolution;
         marker_container.header.stamp = rospy.Time.now()
@@ -417,8 +417,13 @@ class ShortPathMng:
         goal = PoseStamped()
         goal.header.frame_id = "/map"
         goal.header.stamp = rospy.Time(0)
-        goal.pose.position.x = (x / float(2) / (float(10) / self.RESOLUTION)) + 0.2
-        goal.pose.position.y = (y / float(2) / (float(10) / self.RESOLUTION)) + 0.2
+
+
+        offset=self.RESOLUTION *self.resolution/float(2)
+
+        goal.pose.position.x = ((x * self.resolution *self.RESOLUTION))+offset
+        goal.pose.position.y = ((y * self.resolution *self.RESOLUTION))+offset
+
         goal.pose.orientation.x = 0
         goal.pose.orientation.y = 0
         goal.pose.orientation.z = 0.0379763283083
@@ -435,11 +440,11 @@ if __name__ == '__main__':
         # ------------------#
         # FIXME Check private or global ros param
         # RESOLUTION = rospy.get_param('~SHORT_PATH_RESOLUTION', 8)
-        RESOLUTION = rospy.get_param('~SHORT_PATH_RESOLUTION', 4)
+        RESOLUTION = rospy.get_param('~SHORT_PATH_RESOLUTION', 2)
         shortPathMethodeSelected = rospy.get_param('~SHORT_PATH_METHOD', 'ASTAR')
         # shortPathMethodeSelected = rospy.get_param('~SHORT_PATH_METHOD', 'WAVEFRONT')
         isLocalPlanner = rospy.get_param('~LOCAL_PLANNER_USED', True)
-        inflate_radius = rospy.get_param('~INFLATE_RADIUS', 0.3)
+        inflate_radius = rospy.get_param('~INFLATE_RADIUS', 0.5)
         print("------>Used SHORT_PATH_METHOD: " + str(shortPathMethodeSelected))
 
         nav = ShortPathMng(RESOLUTION, shortPathMethodeSelected, isLocalPlanner, inflate_radius)

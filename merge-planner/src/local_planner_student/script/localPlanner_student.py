@@ -103,11 +103,7 @@ class LocalPlanner:
         _, _, theta = euler_from_quaternion([orientation.x, orientation.y, orientation.z, orientation.w])
         self.curPose2D.x = odom.pose.pose.position.x
         self.curPose2D.y = odom.pose.pose.position.y
-        # self.curPose2D.x = x
-        # self.curPose2D.y = y
         self.curPose2D.theta = theta
-
-        # rospy.loginfo("Odom => X: %.2f \t Y: %.2f \t theta: %.2f" % (self.curPose2D.x, self.curPose2D.y, self.curPose2D.theta))
 
     def scanCallback(self, scan):
         """
@@ -116,13 +112,11 @@ class LocalPlanner:
         :type scan: LaserScan
         """
 
-        # for i, val in scan.ranges:
-
         for i, val in enumerate(scan.ranges):
             angle = scan.angle_min + i * scan.angle_increment
             self.isObstacle = (-0.1 <= angle <= 0.1 and val <= self.Obstacle_range)
             if self.isObstacle:
-                rospy.loginfo("Obstacle found angle=", angle)
+                break
 
     # ******************************************************************************************
     # **************************************   SERVICES   **************************************
@@ -152,13 +146,13 @@ class LocalPlanner:
         try:
             now = rospy.Time(0)
             rospy.loginfo("waitForTransform")
-            listener.waitForTransform("/odom", "/map", now, rospy.Duration(nsecs=10 ** 6))
+            listener.waitForTransform("odom", "map", now, rospy.Duration(nsecs=10 ** 6))
             rospy.loginfo("waitForTransform done")
 
             for i in range(len(req.pathToGoal.poses)):
                 poseStamped: PoseStamped = req.pathToGoal.poses[i]
                 rospy.loginfo("# Pose %d : x = %.2f   y = %.2f" % (i, poseStamped.pose.position.x, poseStamped.pose.position.y))
-                req.pathToGoal.poses[i] = listener.transformPose("/odom", poseStamped)
+                req.pathToGoal.poses[i] = listener.transformPose("odom", poseStamped)
 
             del self.pathPoses[:]
             self.pathPoses = deepcopy(req.pathToGoal.poses)
@@ -223,8 +217,6 @@ class LocalPlanner:
 
             target: Pose = self.pathPoses[0].pose
 
-            # TODO_Done for students : calculate distCurTarget and angle. To compute shortest angle use method shortestAngleDiff defined before
-
             d = math.sqrt((target.position.x - self.curPose2D.x) ** 2 + (target.position.y - self.curPose2D.y) ** 2)
 
             steering = math.atan2((target.position.y - self.curPose2D.y), (target.position.x - self.curPose2D.x))
@@ -243,10 +235,9 @@ class LocalPlanner:
         """
         if len(self.pathPoses) > 0:
 
-            # TODO_Done for students : calculate angle . To compute shortest angle use method shortestAngleDiff defined before
             target: Pose = self.pathPoses[0].pose
 
-            _, _, euler = euler_from_quaternion([target.orientation.x, target.orientation.y, target.orientation.z, target.orientation.w])
+            euler, _, _ = euler_from_quaternion([target.orientation.x, target.orientation.y, target.orientation.z, target.orientation.w])
 
             angle = self.shortestAngleDiff(euler, self.curPose2D.theta)
 
@@ -259,19 +250,20 @@ class LocalPlanner:
             Switch between the following sequences : "New Goal" <--> "Reach in progress" --> "Last Goal position Reached" --> "Last Goal pose (position + orientation) Reached"
             :return: One of the string: "New Goal", "Reach in progress",  "Last Goal position Reached", "Last Goal pose (position + orientation) Reached"
         """
+        print("dist ", dist)
+
         if (dist < self.Waypoint_error) and len(self.pathPoses) > 1:
             del self.pathPoses[0]
             # computeVelocity
             rospy.loginfo(f"# New goal : x={self.pathPoses[0].pose.position.x:f} ; y={self.pathPoses[0].pose.position.y:f}")
             return TravelState.INIT  # TODO_done for students : return string matching with the state
-
         elif (dist < self.Destination_error) and len(self.pathPoses) == 1:
-            if fabs(finalOrientation - angle) >= self.Angle_error:
-                state = TravelState.REACHED_DISTANCE  # TODO_done for students : return string matching with the state
+            if fabs(finalOrientation) >= self.Angle_error:
+                state = TravelState.REACHED_DISTANCE
             else:
-                state = TravelState.REACHED_DISTANCE_ORIENTATION  # TODO_done for students : return string matching with the state
+                state = TravelState.REACHED_DISTANCE_ORIENTATION
 
-            rospy.loginfo(f"# {state} : X = {self.pathPoses[0].pose.position.x:.2f} ; Y = {self.pathPoses[0].pose.position.y:.2f}")
+            rospy.loginfo(f"# {state} : X = {self.curPose2D.x:.2f} ; Y = {self.curPose2D.y:.2f} ; Angle = {angle:.2f} ; Final Orientation = {finalOrientation:.2f}")
             return state
 
         return TravelState.PENDING
@@ -288,17 +280,20 @@ class LocalPlanner:
         twist = Twist()
 
         twist.angular.z = angle * self.K_angular
-        # self.Sat_angular)  # TODO_done for students : Apply gain and saturation (both ROSPARAM) to angle (as already done for linear velocity)
+
+        if goalState == TravelState.REACHED_DISTANCE:
+            twist.angular.z /= 10
 
         if fabs(angle) < self.Angle_to_allow_linear:
-            if TravelState.PENDING == goalState or TravelState.REACHED_DISTANCE == goalState:  # TODO_done for students : modify string matching with the state (help in pathSequencer docstring)
-                if self.isObstacle:
-                    twist.linear.x = 0
-                else:
-                    twist.linear.x = min(dist * self.K_linear, self.Sat_linear)
+            if TravelState.PENDING == goalState:
+                twist.linear.x = min(dist * self.K_linear, self.Sat_linear)
 
-        if TravelState.REACHED_DISTANCE_ORIENTATION == goalState:  # TODO_done for students : modify string matching with the state (help in pathSequencer docstring)
+        if TravelState.REACHED_DISTANCE_ORIENTATION == goalState:
             twist.angular.z = 0
+            twist.linear.x = 0
+
+        if self.isObstacle:
+            twist.linear.x = 0
 
         return twist
 
@@ -326,10 +321,10 @@ class LocalPlanner:
 
             goalState = self.pathSequencer(dist, angle, finalOrientation)
 
-            if goalState == TravelState.PENDING:  # TODO_done for students : modify string matching with the state (help in pathSequencer docstring)
+            if goalState == TravelState.PENDING:
                 (dist, angle) = self.computeDistAngle()
 
-            elif TravelState.REACHED_DISTANCE == goalState or TravelState.REACHED_DISTANCE_ORIENTATION == goalState:  # TODO_done for students : modify string matching with
+            elif TravelState.REACHED_DISTANCE == goalState or TravelState.REACHED_DISTANCE_ORIENTATION == goalState:
                 angle = finalOrientation
 
             twist = self.computeVelocity(dist, angle, goalState)
@@ -351,11 +346,11 @@ if __name__ == '__main__':
         K_ANGULAR = rospy.get_param('~K_ANGULAR', 4)
         SAT_LINEAR = rospy.get_param('~SAT_LINEAR', 2.0)
         SAT_ANGULAR = rospy.get_param('~SAT_ANGULAR', pi / 2.0)
-        OBSTACLE_RANGE = rospy.get_param('~OBSTACLE_RANGE', 0.5)
-        ANGLE_TO_ALLOW_LINEAR = rospy.get_param('~ANGLE_TO_ALLOW_LINEAR', 0.2)
-        WAYPOINT_ERROR = rospy.get_param('~WAYPOINT_ERROR', 0.16)
+        OBSTACLE_RANGE = rospy.get_param('~OBSTACLE_RANGE', 0.25)
+        ANGLE_TO_ALLOW_LINEAR = rospy.get_param('~ANGLE_TO_ALLOW_LINEAR', 0.1)
+        WAYPOINT_ERROR = rospy.get_param('~WAYPOINT_ERROR', 0.08)
         DESTINATION_ERROR = rospy.get_param('~DESTINATION_ERROR', 0.003)
-        ANGLE_ERROR = rospy.get_param('~ANGLE_ERROR', 0.05)
+        ANGLE_ERROR = rospy.get_param('~ANGLE_ERROR', 0.025)
 
         # ------------------#
         # Start LocalPlanner#

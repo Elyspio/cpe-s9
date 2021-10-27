@@ -1,11 +1,10 @@
 __author__ = 'Jacques Saraydaryan'
 
-from abc import abstractmethod
-
+from abc import ABCMeta, abstractmethod
 import rospy
+from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
 from std_msgs.msg import ColorRGBA
-from visualization_msgs.msg import Marker
 
 
 class AbstractShortPath:
@@ -23,10 +22,12 @@ class AbstractShortPath:
     # @abstractmethod
     # def robot_detection_callback(self): pass
 
-    def setMap(self, resizedMap, map_width, map_height):
+    def setMap(self, resizedMap, map_width, map_height, map_resolution, resolution):
         self.resizedMap = resizedMap
         self.map_width = map_width
         self.map_height = map_height
+        self.map_resolution = map_resolution
+        self.resolution = resolution
 
     # ******************************************************************************************
     # ********************************   MARKER CREATION   *************************************
@@ -34,8 +35,13 @@ class AbstractShortPath:
 
     def createClosedMarkerPt(self, current, marker_container):
         current_point = Point()
-        current_point.x = (current['x'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
-        current_point.y = (current['y'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
+
+        offset = self.map_resolution * self.resolution / float(2)
+
+        current_point.x = (((current['x'] * self.map_resolution * self.resolution)) + offset)
+        current_point.y = (((current['y'] * self.map_resolution * self.resolution)) + offset)
+        # current_point.x = (current['x'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
+        # current_point.y = (current['y'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
         current_point.z = 0.20 / float(10)
 
         current_color = ColorRGBA()
@@ -49,8 +55,14 @@ class AbstractShortPath:
 
     def createFontierUnitMarkerPt(self, v, marker_container):
         current_point = Point()
-        current_point.x = (v['x'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
-        current_point.y = (v['y'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
+
+        offset = self.map_resolution * self.resolution / float(2)
+
+        current_point.x = (((v['x'] * self.map_resolution * self.resolution)) + offset)
+        current_point.y = (((v['y'] * self.map_resolution * self.resolution)) + offset)
+
+        # current_point.x = (v['x'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
+        # current_point.y = (v['y'] / float(2) / (float(10) / self.RESOLUTION)) + 0.2
         current_point.z = 0.20 / float(10)
 
         current_color = ColorRGBA()
