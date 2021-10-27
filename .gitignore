@@ -1,5 +1,9 @@
-﻿.catkin_tools
+devel
 build
 .idea
-devel
+__pycache__
+.vscode
+venv
+venv.linux
+.catkin_tools
 logs
