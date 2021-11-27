@@ -1,0 +1,16 @@
+Storyboard
+
+
+1. r: bonjour humain, je m'appelle Pepper, comment vous vous appelez ?
+2. h: Bonjour Pepper, je m'appelle X
+3. r: D'accord X, que voulez-vous comme boisson parmi A, B, C, D
+4. h: J'aimerai A s'il te plait
+5. r: Bien compris, j'ai envoyé la commande, le temps de l'attente je vais te raconter une blague: BLAGUE
+
+6. On m'annonce que votre commande est prête, je vais la chercher
+mouvement précodé et pepper revient
+
+7. Voici votre commande, bonne dégustation
+
+
+Fin
