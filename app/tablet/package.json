@@ -1,0 +1,56 @@
+{
+	"name": "react-pepper",
+	"main": ".",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"core-js": "^3.19.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-redux": "7.2.6",
+		"redux": "^4.0.1",
+		"redux-logger": "^3.0.6",
+		"@mui/material": "^5.1.1",
+		"@mui/styles": "^5.1.1",
+		"@emotion/react": "^11.6.0",
+		"@emotion/styled": "^11.6.0",
+		"connected-react-router": "^6.9.1",
+		"react-router": "^5.2.1",
+		"history": "^4.10.1",
+		"@reduxjs/toolkit": "^1.6.2",
+		"socket.io-client": "^4.2.0"
+	},
+	"devDependencies": {
+		"argparse": "latest",
+		"prop-types": "^15.7.2",
+		"run-script-os": "1.0.7",
+		"typescript": "^4.5.2",
+		"react-scripts": "^4.0.3",
+		"prettier": "^2.5.0",
+		"sass": "^1.43.5",
+		"@types/react": "^17.0.35",
+		"@types/react-dom": "^17.0.11",
+		"@types/react-router": "^5.1.17"
+	},
+	"homepage": "./",
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"build:win32": "rmdir /S /Q build",
+		"build:linux": "rm -rf build",
+		"build_to_deploy": "npm run build && node deploy.js --ip 10.42.0.217 --app ihr-jgd-opt",
+		"eject": "react-scripts eject",
+		"resetDependency": "rm -rf ./node_modules && npm install"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			"chrome 35"
+		],
+		"development": [
+			"chrome 35"
+		]
+	}
+}
