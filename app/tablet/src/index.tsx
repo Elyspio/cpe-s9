@@ -10,6 +10,7 @@ import { history, store } from "./view/store/store";
 import "./index.scss";
 import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "./config/theme";
+import { initQi } from "./core/wrapper/QiWrapper";
 
 export namespace Global {
 	export interface Window {
@@ -18,6 +19,8 @@ export namespace Global {
 }
 
 async function initApp() {
+	await initQi();
+
 	ReactDOM.render(
 		<Provider store={store}>
 			<ConnectedRouter history={history}>
