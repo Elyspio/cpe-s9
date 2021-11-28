@@ -11,6 +11,7 @@ import "./index.scss";
 import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "./config/theme";
 import { initQi } from "./core/wrapper/QiWrapper";
+import { redirectStd } from "./core/services/Console.service";
 
 export namespace Global {
 	export interface Window {
@@ -19,6 +20,7 @@ export namespace Global {
 }
 
 async function initApp() {
+	redirectStd();
 	await initQi();
 
 	ReactDOM.render(
