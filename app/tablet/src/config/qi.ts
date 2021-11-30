@@ -13,4 +13,4 @@ const forceRemote = false;
  */
 export const runningOnPepper = forceRemote || allowedVersion.some((v) => window.navigator.userAgent.includes(v));
 
-export const pepperIp = "10.42.0.217";
+export const pepperIp = "192.168.1.118";

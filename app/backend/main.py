@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .console import router as console_router
-from .joke import router as joke_router
+from console import router as console_router
+from joke import router as joke_router
 
 app = FastAPI(debug=False)
 

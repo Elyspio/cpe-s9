@@ -15,7 +15,7 @@ class ConsoleLevel(Enum):
     warning = "warning"
 
 
-log_file = os.path.dirname(os.path.realpath(__file__)) + "/log.txt"
+log_file = os.path.dirname(os.path.realpath(__file__)) + "/log.log"
 
 
 @router.post("/{level}", status_code=204)

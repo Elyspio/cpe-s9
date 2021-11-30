@@ -5,35 +5,15 @@ interface IALDialog {
 	 * Load a topic from its absolute path
 	 * @return a function to unload the topic
 	 */
-	loadTopic(topicName: string): () => void;
-}
+	// loadTopicFromContent(topicContent: string, dialogName?: string): Promise<() => void>;
 
-/**
- *     topic_name = ALDialog.loadTopic(topf_path.encode('utf-8'))
- *
- *     # Activating the loaded topic
- *     ALDialog.activateTopic(topic_name)
- *
- *     # Starting the dialog engine - we need to type an arbitrary string as the identifier
- *     # We subscribe only ONCE, regardless of the number of topics we have activated
- *     ALDialog.subscribe('my_dialog_example')
- *
- *     try:
- *         raw_input("\nSpeak to the robot using rules from the just loaded .top file. Press Enter when finished:")
- *     finally:
- *         # stopping the dialog engine
- *         ALDialog.unsubscribe('my_dialog_example')
- *
- *         # Deactivating the topic
- *         ALDialog.deactivateTopic(topic_name)
- *
- *         # now that the dialog engine is stopped and there are no more activated topics,
- *         # we can unload our topic and free the associated memory
- *         ALDialog.unloadTopic(topic_name)
- */
+	say(text: string, choices: string[], outputALMemory?: string, dialogName?: string): Promise<[string, () => void]>;
+}
 
 interface QiALDialog {
 	loadTopic(topicName: string): void;
+
+	loadTopicContent(topicContent: string): Promise<string>;
 
 	activateTopic(topicName: string): void;
 
@@ -41,10 +21,24 @@ interface QiALDialog {
 
 	subscribe(dialog: string): void;
 
-	desactivateTopic(topicName: string): void;
+	unsubscribe(dialog: string): void;
+
+	deactivateTopic(topicName: string): void;
 
 	unloadTopic(topicName: string): void;
+
+	setLanguage(language: string): void;
+
+	getAllLoadedTopics(): Promise<string[]>;
+
+	activateTag(tagName: string, topicName: string);
+
+	gotoTag(tagName: string, topicName: string);
 }
+
+export const dialogMemoryStorage = "topToJs";
+export const dialogTopicName = "topToJs";
+let idALMemory = 0;
 
 export class ALDialogService extends QiService<QiALDialog> implements IALDialog {
 	private constructor() {
@@ -54,10 +48,44 @@ export class ALDialogService extends QiService<QiALDialog> implements IALDialog 
 	public static async instance(): Promise<IALDialog> {
 		const self = new ALDialogService();
 		await self.init();
+
+		const topics = await self.service.getAllLoadedTopics();
+		for (let topic of topics) {
+			self.service.unloadTopic(topic);
+		}
+		await self.service.setLanguage("French");
+
 		return self;
 	}
 
-	public loadTopic(topicName: string) {
-		return () => {};
+	public async loadTopicFromContent(topicContent: string, dialogName = dialogTopicName) {
+		const topicName = await this.service.loadTopicContent(topicContent);
+
+		await this.service.activateTopic(topicName);
+		await this.service.subscribe(dialogName);
+		await this.service.activateTag("x", topicName);
+		await this.service.gotoTag("x", topicName);
+
+		return async () => {
+			await this.service.unsubscribe(dialogName);
+			await this.service.deactivateTopic(topicName);
+			await this.service.unloadTopic(topicName);
+		};
+	}
+
+	public async say(text: string, choices: string[], outputALMemory: string = dialogMemoryStorage, dialogName: string = dialogTopicName): Promise<[string, () => void]> {
+		let almemory = outputALMemory + idALMemory++;
+		const content = this.getContent(text, choices, almemory, dialogName);
+		console.log("say content=", content);
+		return [almemory, await this.loadTopicFromContent(content, dialogName)];
+	}
+
+	private getContent(text: string, choices: string[], outputALMemory: string, dialogName: string) {
+		return `
+topic: ~${dialogName}()
+language: frf
+proposal: %x ${text}
+u: (_[${choices.join(" ")}]) $${outputALMemory}=$1
+`;
 	}
 }

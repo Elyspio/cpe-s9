@@ -1,6 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { StoreState } from "../store";
 import { steps } from "../../../config/steps";
+import { push } from "connected-react-router";
+import { jokeApi } from "../../../core/apis/joke";
+import { Joke } from "../../../core/apis/joke/generated";
 
 export const stepId = ["ask_name", "ask_drink", "say_joke", "get_order", "comeback", "conclusion"] as const;
 
@@ -15,25 +18,45 @@ export type Step = {
 export type ScenarioState = {
 	step?: Step;
 	steps: Step[];
-	joke?: string;
+	joke?: Joke;
 };
 
 const initialState: ScenarioState = {
 	steps,
 };
 
+export const getJoke = createAsyncThunk("Scenario/setJoke", async () => {
+	const joke = await jokeApi.rootJokesGet();
+	return joke.data;
+});
+
+export const changeStep = createAsyncThunk("Scenario/changeStep", (step: Step, { dispatch }) => {
+	dispatch(push(step.id));
+	if (step.id === "say_joke") {
+		dispatch(getJoke());
+	}
+	return step;
+});
+
 const slice = createSlice({
 	name: "Scenario",
 	initialState,
 	reducers: {
-		setSteps: (state, action: PayloadAction<Step[]>) => {
-			state.steps = action.payload;
+		clearJoke: (state) => {
+			state.joke = undefined;
 		},
-
-		setCurrentStep: (state, { payload: name }: PayloadAction<string>) => {
-			state.step = state.steps.find((step) => step.name === name);
-		},
+	},
+	extraReducers: ({ addCase }) => {
+		addCase(changeStep.fulfilled, (state, action) => {
+			state.step = action.payload;
+		});
+		addCase(getJoke.fulfilled, (state, action) => {
+			state.joke = action.payload;
+		});
 	},
 });
 
-export const { reducer: scenarioReducer, actions: scenarioActions } = slice;
+export const {
+	reducer: scenarioReducer,
+	actions: { clearJoke },
+} = slice;

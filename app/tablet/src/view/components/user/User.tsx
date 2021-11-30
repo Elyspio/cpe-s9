@@ -10,15 +10,15 @@ export function User() {
 		<Paper className={"User"}>
 			<Grid container my={0} alignItems={"center"} direction={"column"} className={"h100"} spacing={2}>
 				<Grid item>
-					<Typography variant={"h3"}>User information</Typography>
+					<Typography variant={"h3"}>Utilisateur</Typography>
 				</Grid>
 				<Grid item>
-					<Typography>{name ? `Your name is: ${name}` : "I dont know your name"}</Typography>
+					<Typography>{name ? `Votre prénom est : ${name}` : "Je ne connais pas votre prénom"}</Typography>
 				</Grid>
 
 				{drink && (
 					<Grid item>
-						<Typography>You want a {drink}</Typography>
+						<Typography>Vous voulez une canette de {drink}</Typography>
 					</Grid>
 				)}
 			</Grid>

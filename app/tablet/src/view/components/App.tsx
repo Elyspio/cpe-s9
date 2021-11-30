@@ -5,24 +5,44 @@ import { StepId } from "../store/modules/scenario.reducer";
 import { AskName } from "./steps/AskName";
 import { AskDrink } from "./steps/AskDrink";
 import { Content } from "./Content";
+import { Joke } from "./steps/Joke";
+import { Comeback } from "./steps/Comeback";
+import { Conclusion } from "./steps/Conclusion";
+import { GetOrder } from "./steps/GetOrder";
 
 export function App() {
 	const stepMap = React.useMemo((): Record<StepId, React.ReactNode> => {
 		return {
 			ask_name: (
-				<Content label={"Ask Name"}>
+				<Content label={"Votre prénom"}>
 					<AskName />
 				</Content>
 			),
 			ask_drink: (
-				<Content label={"Ask Drink"}>
+				<Content label={"Votre boisson"}>
 					<AskDrink />
 				</Content>
 			),
-			comeback: <div />,
-			conclusion: <div />,
-			say_joke: <div />,
-			get_order: <div />,
+			comeback: (
+				<Content label={"Je reviens vers les clients"}>
+					<Comeback />
+				</Content>
+			),
+			conclusion: (
+				<Content label={"Remerciement"}>
+					<Conclusion />
+				</Content>
+			),
+			say_joke: (
+				<Content label={"Commande envoyée"}>
+					<Joke />
+				</Content>
+			),
+			get_order: (
+				<Content label={"Direction cuisine"}>
+					<GetOrder />
+				</Content>
+			),
 		};
 	}, []);
 

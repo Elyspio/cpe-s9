@@ -31,6 +31,8 @@ export interface IALMemory {
 	 * @return {Promise} a promise that is resolved when event is raised.
 	 */
 	raise(event: string, value: any): Promise<void>;
+
+	unsubscribe(event: string): void;
 }
 
 interface QiALMemory {
@@ -44,8 +46,11 @@ interface QiALMemory {
 }
 
 export class ALMemoryService extends QiService<QiALMemory> implements IALMemory {
+	unsubscribed: string[];
+
 	private constructor() {
 		super("ALMemory");
+		this.unsubscribed = [];
 	}
 
 	public static async instance(): Promise<IALMemory> {
@@ -59,11 +64,21 @@ export class ALMemoryService extends QiService<QiALMemory> implements IALMemory 
 		return new Promise<void>(async (resolve) =>
 			this.service.subscriber(event).then((subscriber) => {
 				subscriber.signal.connect((state) => {
-					callback(JSON.parse(state));
+					if (!this.unsubscribed.includes(event)) {
+						try {
+							callback(JSON.parse(state));
+						} catch (e) {
+							callback(state);
+						}
+					}
 				});
 				resolve();
 			})
 		);
+	}
+
+	public unsubscribe(event: string) {
+		this.unsubscribed.push(event);
 	}
 
 	public setALValue(event: string, value: any) {

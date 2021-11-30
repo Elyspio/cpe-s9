@@ -61,6 +61,26 @@ export interface HTTPValidationError {
 /**
  *
  * @export
+ * @interface Joke
+ */
+export interface Joke {
+	/**
+	 *
+	 * @type {string}
+	 * @memberof Joke
+	 */
+	question: string;
+	/**
+	 *
+	 * @type {string}
+	 * @memberof Joke
+	 */
+	answer: string;
+}
+
+/**
+ *
+ * @export
  * @interface ValidationError
  */
 export interface ValidationError {
@@ -210,7 +230,7 @@ export const JokeApiAxiosParamCreator = function (configuration?: Configuration)
 		 * @throws {RequiredError}
 		 */
 		rootJokesGet: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-			const localVarPath = `/jokes/`;
+			const localVarPath = `/jokes`;
 			// use dummy base URL string because the URL constructor only accepts absolute URLs.
 			const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
 			let baseOptions;
@@ -247,7 +267,7 @@ export const JokeApiFp = function (configuration?: Configuration) {
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		async rootJokesGet(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+		async rootJokesGet(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Joke>> {
 			const localVarAxiosArgs = await localVarAxiosParamCreator.rootJokesGet(options);
 			return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
 		},
@@ -267,7 +287,7 @@ export const JokeApiFactory = function (configuration?: Configuration, basePath?
 		 * @param {*} [options] Override http request option.
 		 * @throws {RequiredError}
 		 */
-		rootJokesGet(options?: any): AxiosPromise<string> {
+		rootJokesGet(options?: any): AxiosPromise<Joke> {
 			return localVarFp.rootJokesGet(options).then((request) => request(axios, basePath));
 		},
 	};

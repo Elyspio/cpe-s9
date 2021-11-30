@@ -1,11 +1,11 @@
-import { Step } from "../view/store/modules/scenario.reducer";
+import { Step, StepId } from "../view/store/modules/scenario.reducer";
 
 export const steps: Step[] = [
 	{
 		id: "ask_name",
 		name: "Ask name",
 		// buttons: [],
-		// text: "Hello human, what is your name?",
+		// text: "",
 	},
 	{
 		id: "ask_drink",
@@ -35,3 +35,12 @@ export const steps: Step[] = [
 		id: "conclusion",
 	},
 ];
+
+export const stepsMap = steps.reduce((acc, current) => {
+	acc[current.id] = current;
+	return acc;
+}, {} as Record<StepId, Step>);
+
+export const drinks = ["Coca", "Fanta", "Orangina"];
+
+export const names = ["Jonathan", "Théo", "Olivier", "Raphael", "Nathan", "Corentin", "Fabrice"];

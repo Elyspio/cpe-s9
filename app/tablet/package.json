@@ -39,7 +39,7 @@
 		"build": "react-scripts build",
 		"build:win32": "rmdir /S /Q build",
 		"build:linux": "rm -rf build",
-		"build_to_deploy": "npm run build && node deploy.js --ip 10.42.0.217 --app ihr-jgd-opt",
+		"build_to_deploy": "npm run build && node deploy.js --ip 192.168.1.118 --app ihr-jgd-opt",
 		"eject": "react-scripts eject",
 		"resetDependency": "rm -rf ./node_modules && npm install"
 	},

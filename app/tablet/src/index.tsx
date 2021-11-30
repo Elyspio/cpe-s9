@@ -10,8 +10,8 @@ import { history, store } from "./view/store/store";
 import "./index.scss";
 import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { theme } from "./config/theme";
-import { initQi } from "./core/wrapper/QiWrapper";
 import { redirectStd } from "./core/services/Console.service";
+import { initQi } from "./core/wrapper/InitQi";
 
 export namespace Global {
 	export interface Window {
@@ -21,7 +21,9 @@ export namespace Global {
 
 async function initApp() {
 	redirectStd();
+	console.log("init");
 	await initQi();
+	console.log("init2");
 
 	ReactDOM.render(
 		<Provider store={store}>

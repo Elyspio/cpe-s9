@@ -1,10 +1,21 @@
 import requests
 from fastapi import APIRouter
-from fastapi.responses import PlainTextResponse
+from pydantic.dataclasses import dataclass
 
 router = APIRouter(prefix="/jokes", tags=["Joke"])
 
 
-@router.get("/", response_class=PlainTextResponse)
+@dataclass
+class Joke:
+    question: str
+    answer: str
+
+    def __init__(self, question, answer):
+        self.answer = answer
+        self.question = question
+
+
+@router.get("", response_model=Joke)
 def root():
-    return requests.get("https://v2.jokeapi.dev/joke/Any?format=json&type=single").json()["joke"]
+    joke = requests.get("https://blague.xyz/api/joke/random").json()["joke"]
+    return Joke(joke["question"], joke["answer"])
